@@ -53,7 +53,7 @@ if __name__ == "__main__":
     num_gcn_layers = 16  # Reduce the number of layers 16
     num_rnn_layers = 3 #3
     hidden_channels = 32 #32
-    num_predictions = 1152  # Number of timesteps to predict into the future #288
+    num_predictions = 288  # Number of timesteps to predict into the future #288
     dropout = 0 #0
     num_epochs = 1500
 

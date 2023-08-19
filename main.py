@@ -62,7 +62,7 @@ if __name__ == "__main__":
     train_data, test_data = traffic_data[:, :-num_predictions], traffic_data[:, -num_predictions:]
 
     # Create the model
-    model_type = 'GCN_GRU_BI_Attention'  # change this to the desired model type
+    model_type = 'GCN_LSTM_BI_Multi_Attention'  # change this to the desired model type
 
     # Feed Forward models
     if model_type == 'ARIMA_NN':
@@ -97,9 +97,17 @@ if __name__ == "__main__":
         from models.GCN_GRU_BI import GCN_GRU_BI
         model = GCN_GRU_BI(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
+    elif model_type == 'GCN_GRU_TeacherForcing':
+        from models.GCN_GRU_TeacherForcing import GCN_GRU_TeacherForcing
+        model = GCN_GRU_TeacherForcing(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
     elif model_type == 'GCN_GRU_BI_Attention':
         from models.GCN_GRU_BI_Attention import GCN_GRU_BI_Attention
         model = GCN_GRU_BI_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    elif model_type == 'GCN_GRU_BI_Multi_Attention':
+        from models.GCN_GRU_BI_Multi_Attention import GCN_GRU_BI_Multi_Attention
+        model = GCN_GRU_BI_Multi_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
     # LSTM-based models
     elif model_type == 'GCN_LSTM':
@@ -125,6 +133,12 @@ if __name__ == "__main__":
     elif model_type == 'GCN_LSTM_BI_Attention':
         from models.GCN_LSTM_BI_Attention import GCN_LSTM_BI_Attention
         model = GCN_LSTM_BI_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    elif model_type == 'GCN_LSTM_BI_Multi_Attention':
+        from models.GCN_LSTM_BI_Multi_Attention import GCN_LSTM_BI_Multi_Attention
+        model = GCN_LSTM_BI_Multi_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+        
 
     # Transformer-based model
     elif model_type == 'GCN_Transformer':

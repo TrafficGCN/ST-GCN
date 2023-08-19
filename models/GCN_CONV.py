@@ -31,7 +31,7 @@ class GCN_CONV(pyg_nn.MessagePassing):
     def message(self, x_j, edge_weight):
         return x_j if edge_weight is None else x_j * edge_weight.view(-1, 1)
 
-
+# gcn_layer = GCN_CONV(in_channels=16, out_channels=16, activation=nn.LeakyReLU(), use_batch_norm=True, residual=True)
 
 '''
 class GCN_CONV(pyg_nn.MessagePassing):

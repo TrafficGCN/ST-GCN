@@ -62,7 +62,7 @@ if __name__ == "__main__":
     train_data, test_data = traffic_data[:, :-num_predictions], traffic_data[:, -num_predictions:]
 
     # Create the model
-    model_type = 'GCN_LSTM_BI'  # change this to the desired model type
+    model_type = 'GCN_LSTM_BI_Attention'  # change this to the desired model type
 
     if model_type == 'ARIMA_NN':
         from models.ARIMA_NN import ARIMA_NN

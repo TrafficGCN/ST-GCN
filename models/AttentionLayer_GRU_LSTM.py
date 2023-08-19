@@ -24,6 +24,7 @@ class AttentionLayer_GRU_LSTM(nn.Module):
         return x
 '''
 
+
 class AttentionLayer_GRU_LSTM(nn.Module):
     def __init__(self, in_channels, out_channels, n_heads=1):
         super(AttentionLayer_GRU_LSTM, self).__init__()

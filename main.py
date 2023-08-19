@@ -62,8 +62,9 @@ if __name__ == "__main__":
     train_data, test_data = traffic_data[:, :-num_predictions], traffic_data[:, -num_predictions:]
 
     # Create the model
-    model_type = 'GCN_LSTM_BI_Attention'  # change this to the desired model type
+    model_type = 'GCN_GRU_BI_Attention'  # change this to the desired model type
 
+    # Feed Forward models
     if model_type == 'ARIMA_NN':
         from models.ARIMA_NN import ARIMA_NN
         p, d, q = 5, 1, 0  # Sample ARIMA parameters
@@ -87,41 +88,49 @@ if __name__ == "__main__":
         numpy_train_data = train_data.numpy()
         model.svr.fit(numpy_train_data)
 
-    elif model_type == 'GCN_LSTM':
-        from models.GCN_LSTM import GCN_LSTM
-        model = GCN_LSTM(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
-
+    # GRU-based models
     elif model_type == 'GCN_GRU':
         from models.GCN_GRU import GCN_GRU
         model = GCN_GRU(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
-
-    elif model_type == 'GCN_LSTM_BI':
-        from models.GCN_LSTM_BI import GCN_LSTM_BI
-        model = GCN_LSTM_BI(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
-
-    elif model_type == 'GCN_LSTM_BI_Attention':
-        from models.GCN_LSTM_BI_Attention import GCN_LSTM_BI_Attention
-        model = GCN_LSTM_BI_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
-
-    elif model_type == 'GCN_LSTM_Peepholes':
-        from models.GCN_LSTM_Peepholes import GCN_LSTM_Peepholes
-        model = GCN_LSTM_Peepholes(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
     elif model_type == 'GCN_GRU_BI':
         from models.GCN_GRU_BI import GCN_GRU_BI
         model = GCN_GRU_BI(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
-    elif model_type == 'GCN_Transformer':
-        from models.GCN_Transformer import GCN_Transformer
-        model = GCN_Transformer(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+    elif model_type == 'GCN_GRU_BI_Attention':
+        from models.GCN_GRU_BI_Attention import GCN_GRU_BI_Attention
+        model = GCN_GRU_BI_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    # LSTM-based models
+    elif model_type == 'GCN_LSTM':
+        from models.GCN_LSTM import GCN_LSTM
+        model = GCN_LSTM(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    elif model_type == 'GCN_LSTM_Peepholes':
+        from models.GCN_LSTM_Peepholes import GCN_LSTM_Peepholes
+        model = GCN_LSTM_Peepholes(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
     elif model_type == 'GCN_LSTM_TeacherForcing':
         from models.GCN_LSTM_TeacherForcing import GCN_LSTM_TeacherForcing
         model = GCN_LSTM_TeacherForcing(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
 
+    elif model_type == 'GCN_LSTM_BI':
+        from models.GCN_LSTM_BI import GCN_LSTM_BI
+        model = GCN_LSTM_BI(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
     elif model_type == 'GCN_LSTM_BI_TeacherForcing':
         from models.GCN_LSTM_BI_TeacherForcing import GCN_LSTM_BI_TeacherForcing
         model = GCN_LSTM_BI_TeacherForcing(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    elif model_type == 'GCN_LSTM_BI_Attention':
+        from models.GCN_LSTM_BI_Attention import GCN_LSTM_BI_Attention
+        model = GCN_LSTM_BI_Attention(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
+    # Transformer-based model
+    elif model_type == 'GCN_Transformer':
+        from models.GCN_Transformer import GCN_Transformer
+        model = GCN_Transformer(train_data.size(1), hidden_channels, num_gcn_layers, num_rnn_layers, num_predictions, dropout)
+
 
 
     # Define the loss and optimizer

@@ -25,7 +25,7 @@ class GCN_LSTM(nn.Module):
         self.lstm = nn.LSTM(hidden_channels, hidden_channels, num_layers=num_rnn_layers,  batch_first=True)
 
         # Add attention layer
-        #self.attention_layer = AttentionLayer_GRU_LSTM(hidden_channels, hidden_channels)
+        self.attention_layer = AttentionLayer_GRU_LSTM(hidden_channels, hidden_channels)
 
         self.output_layer = nn.Linear(hidden_channels, num_predictions)
 

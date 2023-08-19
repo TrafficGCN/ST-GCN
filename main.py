@@ -28,8 +28,8 @@ if __name__ == "__main__":
     OS_PATH = os.path.dirname(os.path.realpath('__file__'))
 
     # Load your traffic data and adjacency matrix from CSV files
-    speed_csv_file = OS_PATH + '/data/metr-la/metr_la_speed.csv'
-    adjacency_csv_file = OS_PATH + '/data/metr-la/metr_la_adj.csv'
+    speed_csv_file = OS_PATH + '/data/pems-bay/pems_bay_speed.csv'
+    adjacency_csv_file = OS_PATH + '/data/pems-bay/pems_bay_adj.csv'
 
     speed_df = data_helpers.load_speed_data(speed_csv_file)[1:] # ignore the first row
     speed_df = speed_df.iloc[:,1:] # ignore the first column
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         accuracy_list.append(accuracy)
 
 
-    output_path = OS_PATH + "/output/metr-la/"
+    output_path = OS_PATH + "/output/pems-bay/"
 
 
     # Visualize the Metrics

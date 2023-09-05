@@ -4,7 +4,6 @@ import os
 import torch
 import torch.nn as nn
 
-import os
 import helpers.metrics as metrics
 import helpers.visualisation as visualisation
 import helpers.data as data
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     metrics.visualize_metric(loss_list, 'Loss', output_path)
     metrics.visualize_metric(rmse_list, 'RMSE', output_path)
     metrics.visualize_metric(mae_list, 'MAE', output_path)
-    metrics.visualize_metric(r2_list, 'R2 Score', output_path)
+    metrics.visualize_metric(r2_list, 'R² Score', output_path)
     metrics.visualize_metric(variance_list, 'Variance', output_path)
     metrics.visualize_metric(accuracy_list, 'Accuracy', output_path)
 
@@ -125,6 +124,16 @@ if __name__ == "__main__":
 
     # Visualize the distributions
     stats.plot_error_distributions(best_sensor_rmse, best_sensor_mae, best_sensor_accuracy, best_sensor_r2, best_sensor_variance, output_path)
+    
+    # Load geocoordinates data
+    geocoordinates_csv_file = f"{OS_PATH}/data/{DATA_SET}/geocoordinates.csv"
+
+    if os.path.exists(geocoordinates_csv_file):
+        geocoordinates_df = data.load_geocoordinates(geocoordinates_csv_file)
+        stats.plot_error_distributions_map(best_sensor_rmse, best_sensor_mae, best_sensor_accuracy, best_sensor_r2, best_sensor_variance, output_path, sensor_ids, geocoordinates_df)
+    else:
+        print(f"File {geocoordinates_csv_file} does not exist! No heat maps will be created!")
+
 
     # Convert the normalized predictions back to the original speed values
     actual_data_np = scaler.inverse_transform(test_data.detach().numpy().T)

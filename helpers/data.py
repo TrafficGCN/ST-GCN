@@ -16,3 +16,8 @@ def normalize_speed_data(speed_df):
     scaler = MinMaxScaler()
     speed_normalized = scaler.fit_transform(speed_df)
     return torch.tensor(speed_normalized, dtype=torch.float), scaler
+
+def load_geocoordinates(csv_file):
+    geocoordinates_df = pd.read_csv(csv_file)
+    geocoordinates_df = geocoordinates_df.set_index("detid")
+    return geocoordinates_df

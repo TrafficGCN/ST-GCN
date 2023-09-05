@@ -1,248 +1,139 @@
 import os
+import pandas as pd
 from matplotlib import pyplot as plt
 from scipy import stats
 from scipy.stats import norm
 import numpy as np
 
-def plot_error_distributions(best_sensor_rmse, best_sensor_mae, best_sensor_accuracy, best_sensor_r2, best_sensor_variance, output_path):
-    
+import pandas as pd
+import os
+import plotly.express as px
+
+def plot_error_distributions_map(best_sensor_rmse, best_sensor_mae, best_sensor_accuracy, best_sensor_r2, best_sensor_variance, output_path, sensor_ids, geocoordinates):
     save_path = os.path.join(output_path, "stats")
 
-    ### normal distribution of the min rmse values for all sensors nodes ###
-    # sort the values for the distributions
-    best_sensor_rmse = sorted(best_sensor_rmse)
+    metrics_to_plot = [
+        ("Test Root Mean Square Error (RMSE)", "RMSE", best_sensor_rmse),
+        ("Test Mean Absolute Error (MAE)", "MAE", best_sensor_mae),
+        ("Test Accuracy (Acc)", "Acc", best_sensor_accuracy),
+        ("Test Coefficient of Determination (R²)", "R²", best_sensor_r2),
+        ("Test Variance (Var)", "Var", best_sensor_variance)
+    ]
 
-    print("Generating RMSE stats...")
+    # Prepare data for heatmap
+    heatmap_data = []
+    for sensor_id in sensor_ids:
+        row = geocoordinates.loc[sensor_id]
+        heatmap_data.append(row)
 
-    # fit the curve normal distribution #cdf alt
-    fit_data = stats.norm.cdf(best_sensor_rmse, np.mean(
-        best_sensor_rmse), np.std(best_sensor_rmse))  # this is a fitting indeed
+    heatmap_df = pd.DataFrame(heatmap_data, columns=["lat", "long"])
 
-    # title
-    plt.title("Normal Distribution of the Min RMSE Values for All Sensors", fontweight="bold",
-              color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
-    # x y ticks
-    plt.yticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-    plt.xticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
+    for metric_label, metric_name, metric_values in metrics_to_plot:
+        metric_values = sorted(metric_values)
+        print(f"Generating {metric_name} stats...")
 
-    # plot the distribution σ µ
-    plt.plot(best_sensor_rmse, fit_data, linewidth=1, marker=".", markersize=2, color="#ffd700", label="RMSE, σ = " +
-             str(round(np.std(best_sensor_rmse), 2)) + ", µ = " + str(round(np.mean(best_sensor_rmse), 2)),)
-    plt.legend(loc='best', fontsize=8)
+        color_min = 0 if any(val < 0 for val in metric_values) else min(metric_values)  # <-- Added this logic
 
-    # plot the mean
-    plt.axvline(x=np.mean(best_sensor_rmse), linewidth=1,
-                color='#ffd700', ls='--', label='axvline - full height')
-
-    # axis titles
-    plt.xlabel('Test Root Mean Square Error (RMSE)', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-
-    # plt.hist(h)      #use this to draw histogram of your data
-
-    # save the distribution
-    plt.savefig(save_path+'/rmse_distribution.jpg', dpi=500)
-
-    # show the distribution
-    # plt.show()
-
-    # close the distribution
-    plt.close()
-
-    ### normal distribution of the min mae values for all sensors nodes ###
-    # sort the values for the distributions
-    best_sensor_mae = sorted(best_sensor_mae)
-
-    print("Generating MAE stats...")
-
-    # fit the curve normal distribution
-    fit_data = stats.norm.cdf(best_sensor_mae, np.mean(
-        best_sensor_mae), np.std(best_sensor_mae))  # this is a fitting indeed
-
-    # title
-    plt.title("Normal Distribution of the Min MAE Values for All Sensors", fontweight="bold",
-              color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
-    # x y ticks
-    plt.yticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-    plt.xticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-
-    # plot the distribution σ µ
-    plt.plot(best_sensor_mae, fit_data, linewidth=1, marker=".", markersize=2, color="#ffd700", label="MAE, σ = " +
-             str(round(np.std(best_sensor_mae), 2)) + ", µ = " + str(round(np.mean(best_sensor_mae), 2)),)
-    plt.legend(loc='best', fontsize=8)
-
-    # plot the mean
-    plt.axvline(x=np.mean(best_sensor_mae), linewidth=1,
-                color='#ffd700', ls='--', label='axvline - full height')
-
-    # axis titles
-    plt.xlabel('Test Mean Absolute Error (MAE)', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-
-    # plt.hist(h)      #use this to draw histogram of your data
-
-    # save the distribution
-    plt.savefig(save_path+'/mae_distribution.jpg', dpi=500)
-
-    # show the distribution
-    # plt.show()
-
-    # close the distribution
-    plt.close()
-
-    ### normal distribution of the max acc values for all sensors nodes ###
-    # sort the values for the distributions
-    best_sensor_accuracy = sorted(best_sensor_accuracy)
-
-    print("Generating Acc stats...")
-
-    # fit the curve normal distribution
-    fit_data = stats.norm.cdf(best_sensor_accuracy, np.mean(
-        best_sensor_accuracy), np.std(best_sensor_accuracy))  # this is a fitting indeed
-
-    # title
-    plt.title("Normal Distribution of the Max Accuracy Values for All Sensors", fontweight="bold",
-              color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
-    # x y ticks
-    plt.yticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-    plt.xticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-
-    # plot the distribution σ µ
-    plt.plot(best_sensor_accuracy, fit_data, linewidth=1, marker=".", markersize=2, color="#ffd700", label="Acc, σ = " +
-             str(round(np.std(best_sensor_accuracy), 2)) + ", µ = " + str(round(np.mean(best_sensor_accuracy), 2)),)
-    plt.legend(loc='best', fontsize=8)
-
-    # plot the mean
-    plt.axvline(x=np.mean(best_sensor_accuracy), linewidth=1,
-                color='#ffd700', ls='--', label='axvline - full height')
-
-    # axis titles
-    plt.xlabel('Test (Accuracy)', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.axis([-1, 1, 0, None])
-    # plt.hist(h)      #use this to draw histogram of your data
-
-    # save the distribution
-    plt.savefig(save_path+'/acc_distribution.jpg', dpi=500)
-
-    # show the distribution
-    # plt.show()
-
-    # close the distribution
-    plt.close()
-
-    ### normal distribution of the max r2 values for all sensors nodes ###
-    # sort the values for the distributions
-    best_sensor_r2 = sorted(best_sensor_r2)
-
-    print("Generating R2 stats...")
-
-    # fit the curve normal distribution
-    fit_data = stats.norm.cdf(best_sensor_r2, np.mean(
-        best_sensor_r2), np.std(best_sensor_r2))  # this is a fitting indeed
-
-    # title
-    plt.title("Normal Distribution of the Max R² Values for All Sensors", fontweight="bold",
-              color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
-    # x y ticks
-    plt.yticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-    plt.xticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-
-    # plot the distribution σ µ
-    plt.plot(best_sensor_r2, fit_data, marker=".", linewidth=1, markersize=2, color="#ffd700", label="R², σ = " +
-             str(round(np.std(best_sensor_r2), 2)) + ", µ = " + str(round(np.mean(best_sensor_r2), 2)),)
-    plt.legend(loc='best', fontsize=8)
-    plt.axis([-1, 1, 0, None])
-
-    # plot the mean
-    plt.axvline(x=np.mean(best_sensor_r2), linewidth=1,
-                color='#ffd700', ls='--', label='axvline - full height')
-
-    # axis titles
-    plt.xlabel('Test Coefficient of Determination (R²)', fontweight="bold",
-               color="#333333", fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-
-    # plt.hist(h)      #use this to draw histogram of your data
-
-    # save the distribution
-    plt.savefig(save_path+'/r2_distribution.jpg', dpi=500)
-
-    # show the distribution
-    # plt.show()
-
-    # close the distribution
-    plt.close()
-
-    ### normal distribution of the max var values for all sensors nodes ###
-    # sort the values for the distributions
-    best_sensor_variance = sorted(best_sensor_variance)
-
-    print("Generating Variance stats...")
-
-    # fit the curve normal distribution
-    fit_data = stats.norm.cdf(best_sensor_variance, np.mean(
-        best_sensor_variance), np.std(best_sensor_variance))  # this is a fitting indeed
-
-    # title
-    plt.title("Normal Distribution of the Max VAR Values for All Sensors", fontweight="bold",
-              color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
-    # x y ticks
-    plt.yticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-    plt.xticks(fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontsize=8)
-
-    # plot the distribution σ µ
-    plt.plot(best_sensor_variance, fit_data, marker=".", linewidth=1, markersize=2, color="#ffd700", label="VAR, σ = " +
-             str(round(np.std(best_sensor_variance), 2)) + ", µ = " + str(round(np.mean(best_sensor_variance), 2)),)
-    plt.legend(loc='best', fontsize=8)
-    plt.axis([-1, 1, 0, None])
-
-    # plot the mean
-    plt.axvline(x=np.mean(best_sensor_variance), linewidth=1,
-                color='#ffd700', ls='--', label='axvline - full height')
-
-    # axis titles
-    plt.xlabel('Test Variance (VAR)', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-    plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
-               fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
-
-    # plt.hist(h)      #use this to draw histogram of your data
-
-    # save the distribution
-    plt.savefig(save_path+'/var_distribution.jpg', dpi=500)
-
-    # show the distribution
-    # plt.show()
-
-    # close the distribution
-    plt.close()
+        # Plotly scatter mapbox
+        fig = px.scatter_mapbox(heatmap_df, 
+                                lat="lat", 
+                                lon="long", 
+                                color=metric_values, 
+                                color_continuous_scale="viridis",
+                                title=f"Heatmap of {metric_label}",
+                                size_max=15,
+                                zoom=12,
+                                labels={"color": ""},
+                                range_color=[color_min, max(metric_values)])   # <-- Updated this line
 
 
-def gaussian(x, mu, sig):
-    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
+        # Diameter of the plots 
+        fig.update_traces(marker={'size': 15})
 
 
-def normal_dist(x, mean, sd):
-    prob_density = (np.pi*sd) * np.exp(-0.5*((x-mean)/sd)**2)
-    return prob_density
+        fig.update_layout(
+            mapbox_style="light", 
+            mapbox_accesstoken="pk.eyJ1IjoidGhvbWFzYWZpbmsiLCJhIjoiY2wyOW5oZXJpMGwzaTNkbGdlcTFucDBtMCJ9.Z56kEx_TLUFek6Hdr8FKuA",
+            title=dict(yanchor="top", y=0.99, xanchor="center", x=0.5),  # Adjusted y value
+            font_family="Times New Roman",
+            font_color="#333333",
+            title_font_size=64,
+            font_size=32,         
+            legend=dict(
+                orientation="v", 
+                yanchor="middle", 
+                y=0.5, 
+                xanchor="left", 
+                x=1.05
+            ),
+            annotations=[
+                dict(
+                    x=1.15,  # Adjust this for better positioning
+                    y=0.5,
+                    xref="paper",
+                    yref="paper",
+                    text=metric_label,
+                    showarrow=False,
+                    font=dict(size=14),
+                    textangle=-90,  # Rotate the text by 90 degrees
+                    xanchor='left',
+                    yanchor='middle'
+                )
+            ]
+        )
+
+
+        fig.update_coloraxes(colorbar_tickfont_size=32) 
+
+
+        fig.write_image(save_path + f'/{metric_name.lower()}_heatmap.jpg', format="jpeg", width=2000, height=2000, scale=5)
+
+
+
+
+
+def plot_error_distributions(best_sensor_rmse, best_sensor_mae, best_sensor_accuracy, best_sensor_r2, best_sensor_variance, output_path):
+    save_path = os.path.join(output_path, "stats")
+
+    metrics_to_plot = [
+        ("Test Root Mean Square Error (RMSE)", "RMSE", best_sensor_rmse),
+        ("Test Mean Absolute Error (MAE)", "MAE", best_sensor_mae),
+        ("Test Accuracy (Acc)", "Acc",best_sensor_accuracy),
+        ("Test Coefficient of Determination (R²)", "R²", best_sensor_r2),        
+        ("Test Variance (Var)", "Var", best_sensor_variance)
+    ]
+
+    for metric_label, metric_name, metric_values in metrics_to_plot:
+        metric_values = sorted(metric_values)
+
+        print(f"Generating {metric_name} stats...")
+
+        fit_data = stats.norm.cdf(metric_values, np.mean(metric_values), np.std(metric_values))
+
+        plt.title(f"Normal Distribution of the Min {metric_name} Values for All Sensors", fontweight="bold",
+                  color="#333333", pad=10, fontname='Times New Roman', fontdict={'fontsize': 12})
+        plt.yticks(fontweight="bold", color="#333333",
+                   fontname='Times New Roman', fontsize=8)
+        plt.xticks(fontweight="bold", color="#333333",
+                   fontname='Times New Roman', fontsize=8)
+
+        plt.plot(metric_values, fit_data, linewidth=1, marker=".", markersize=2, color="#ffd700", label=f"{metric_name}, σ = " +
+                 str(round(np.std(metric_values), 2)) + ", µ = " + str(round(np.mean(metric_values), 2)),)
+        plt.legend(loc='best', fontsize=8)
+
+        plt.axvline(x=np.mean(metric_values), linewidth=1,
+                    color='#ffd700', ls='--', label='axvline - full height')
+
+        plt.xlabel(f'{metric_label}', fontweight="bold", color="#333333",
+                   fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
+        plt.ylabel('Frequency in %', fontweight="bold", color="#333333",
+                   fontname='Times New Roman', fontdict={'fontsize': 10}, labelpad=8)
+
+        plt.savefig(save_path+f'/{metric_name.lower()}_distribution.jpg', dpi=500)
+        plt.close()
+
+
+
 
 
 def plot_additional_errors(test_rmse, train_rmse, train_loss, alpha1, save_path):

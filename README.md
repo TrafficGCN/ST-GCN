@@ -2,7 +2,7 @@
 Base models for graph convolutional networks.
 
 
-# Citations
+### Citations
 For the Los Angeles metr-la and Santa Clara pems-bay datasets cite: 
 <i>Kwak, Semin. (2020). PEMS-BAY and METR-LA in csv [Data set]. Zenodo. https://doi.org/10.5281/zenodo.5146275</i>
 
@@ -14,3 +14,27 @@ For UTD19 cite and check terms of use: https://utd19.ethz.ch/
 OpenStreetMap https://www.openstreetmap.org/ must also be referenced because the matrices where calculated using OpenStreetMap.
 
 If you use any of the Maps you must reference both OpenStreetMap and Mapbox https://www.mapbox.com/.
+
+### Error Distribution
+
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/acc_distribution.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/r%C2%B2_distribution.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/var_distribution.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/mae_distribution.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/rmse_distribution.jpg?raw=true" width="18%" align="left">
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/acc_heatmap.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/r%C2%B2_heatmap.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/var_heatmap.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/mae_heatmap.jpg?raw=true" width="18%" align="left">
+<img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/rmse_heatmap.jpg?raw=true" width="18%" align="left">
+
+
+

@@ -26,14 +26,14 @@ class SVRModule:
         return torch.tensor(forecasts)
 
 class SVR_NN(nn.Module):
-    def __init__(self, input_size, hidden_size, kernel='rbf', degree=3, C=1.0, epsilon=0.1, num_predictions=288):
+    def __init__(self, hidden_channels, kernel='rbf', degree=3, C=1.0, epsilon=0.1, num_predictions=288):
         super(SVR_NN, self).__init__()
         self.svr = SVRModule(kernel, degree, C, epsilon)
         
         # Adjusting the linear layer's input size
-        self.linear = nn.Linear(2 * num_predictions, hidden_size)
+        self.linear = nn.Linear(2 * num_predictions, hidden_channels)
         
-        self.output_layer = nn.Linear(hidden_size, num_predictions)
+        self.output_layer = nn.Linear(hidden_channels, num_predictions)
         self.num_predictions = num_predictions
 
     def forward(self, x, edge_index, edge_weight):

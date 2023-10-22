@@ -98,6 +98,22 @@ models_map = {
             "num_rnn_layers": 3,          
             "dropout": 0,
         }),
+        'GCN_LSTM_BI_Multi_Attention_Weather': ("models.GCN_LSTM_BI_Multi_Attention_Weather.GCN_LSTM_BI_Multi_Attention_Weather", {
+            "in_channels": None,
+            "hidden_channels": 64,
+            "num_gcn_layers": 64,
+            "num_rnn_layers": 3,          
+            "dropout": 0,
+            "num_lags": 8,
+        }),
+        'GCN_LSTM_BI_Multi_Attention_Weather_Separate': ("models.GCN_LSTM_BI_Multi_Attention_Weather_Separate.GCN_LSTM_BI_Multi_Attention_Weather_Separate", {
+            "in_channels": None,
+            "hidden_channels": 64,
+            "num_gcn_layers": 64,
+            "num_rnn_layers": 3,          
+            "dropout": 0,
+            "num_lags": 8,
+        }),
         'GCN_Transformer': ("models.GCN_Transformer.GCN_Transformer", {
             "in_channels": None,
             "hidden_channels": 32,
@@ -113,7 +129,12 @@ def init_model(model_type, train_data, num_predictions, dropout=0):
     model_class = getattr(__import__(model_module, fromlist=[model_name]), model_name)
 
     # Set in_channels to the number of input features
-    default_params["in_channels"] = train_data.size(1)
+    if "in_channels" in default_params:
+        default_params["in_channels"] = train_data.size(1)
+    if "speed_channels" in default_params:
+        default_params["speed_channels"] = train_data.size(1)
+    if "temp_channels" in default_params:
+        default_params["temp_channels"] = train_data.size(1)
     default_params["num_predictions"] = num_predictions
 
 

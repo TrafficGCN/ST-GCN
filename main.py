@@ -18,14 +18,14 @@ if __name__ == "__main__":
     OS_PATH = os.path.dirname(os.path.realpath('__file__'))
 
     # Load your traffic data and adjacency matrix from CSV files
-    DATA_SET = "metr-la"
+    DATA_SET = "pems-bay"
 
     # Create subfolder in output_path
-    speed_csv_file = f"{OS_PATH}/data/{DATA_SET}/speed.csv"
-    adjacency_csv_file = f"{OS_PATH}/data/{DATA_SET}/adj.csv"
+    data_csv_file = f"{OS_PATH}/data/{DATA_SET}/weather/merged_speed_traffic_and_air_temperature_data.csv"
+    adjacency_csv_file = f"{OS_PATH}/data/{DATA_SET}/traffic/adj.csv"
 
-    speed_df = data.load_speed_data(speed_csv_file)[1:] # ignore the first row
-    speed_df = speed_df.iloc[:,1:] # ignore the first column
+    data_df = data.load_data(data_csv_file)[1:] # ignore the first row
+    data_df = data_df.iloc[:,1:] # ignore the first column
 
     adjacency_df = data.load_adjacency_matrix(adjacency_csv_file)
     sensor_ids = adjacency_df.iloc[:, 0].tolist()  # Get the sensor IDs from the first column
@@ -33,8 +33,9 @@ if __name__ == "__main__":
     adjacency_df = adjacency_df.iloc[:,1:] # ignore the first column
 
     # Normalize speed data
-    speed_normalized, scaler = data.normalize_speed_data(speed_df)
-    traffic_data = speed_normalized
+    data_normalized, scaler = data.normalize_data(data_df)
+    traffic_data = data_normalized
+
 
     traffic_data = torch.transpose(traffic_data, 0, 1)
 
@@ -52,7 +53,7 @@ if __name__ == "__main__":
 
     # Hyperparameters set layers and settings for the desired model in model_config.py
     model = init_model(
-        model_type = "GCN_LSTM_BI_Multi_Attention",
+        model_type = "GCN_LSTM_BI_Multi_Attention_Weather_Separate",
         train_data = train_data,
         num_predictions = num_predictions,
     )

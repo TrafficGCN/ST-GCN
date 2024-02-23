@@ -15,8 +15,6 @@ Base models for graph convolutional networks.
 
 6. For Shenzhen cite: https://github.com/lehaifeng/T-GCN
 
-# Successfully generating and saving the README.md file with the correct and complete content
-
 ### Traffic Prediction Models
 
 This document outlines the various models developed for traffic prediction. Each model is specifically designed to address unique aspects of traffic data analysis and prediction.

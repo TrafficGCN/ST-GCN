@@ -178,27 +178,6 @@ sequenceDiagram
     Attention->>Output: Predict traffic conditions
 ```
 
-#### Step-by-Step Explanation of the GCN_GRU Model Diagram
-
-1. **Input Features (x_i)**: The process begins with the input features of the traffic sensor nodes. These features can include current traffic speed, density, or any other relevant metrics captured by the sensors.
-
-2. **Spatial Feature Processing with GCN Layers**:
-   - The input features are first processed through one or more GCN layers.
-   - These layers update each sensor node's features by aggregating information from its neighboring nodes, effectively capturing the spatial dependencies within the traffic network.
-   - This step ensures that the model considers how traffic conditions at one sensor are influenced by conditions at nearby sensors.
-
-3. **Temporal Feature Processing with GRU Layer**:
-   - The features processed by the GCN layers, which now incorporate spatial context, are fed into a GRU layer.
-   - The GRU layer models the temporal dynamics of the traffic conditions, learning patterns over time such as daily traffic volume changes or the impact of specific events on traffic flow.
-   - This allows the model to understand how traffic conditions evolve and predict future states based on past and present observations.
-
-4. **Optional Attention Mechanism**:
-   - An optional attention layer can be applied after the GRU layer to refine the model's focus on the most relevant temporal features for prediction.
-
-5. **Output Prediction**:
-   - The final step involves making predictions regarding traffic conditions using the temporally processed features, optionally refined by the attention mechanism.
-   - The model outputs predictions for each sensor node, such as expected traffic speed and density, providing actionable insights for traffic management and planning.
-
 This sequential workflow allows the `GCN_GRU` model to leverage both the spatial layout of the traffic sensor network and the temporal evolution of traffic conditions, offering a comprehensive approach to traffic prediction.
 
 #

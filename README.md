@@ -233,22 +233,6 @@ sequenceDiagram
 
 #
 
-### GCN_GRU_BI_Attention
-- **Path**: `models.GCN_GRU_BI_Attention.GCN_GRU_BI_Attention`
-- **Description**: Incorporates attention mechanisms into the GCN_GRU_BI model, allowing it to focus on critical temporal intervals for improved prediction accuracy.
-- **Parameters**:
-  - Same as GCN_GRU_BI
-
-#
-
-### GCN_GRU_BI_Multi_Attention
-- **Path**: `models.GCN_GRU_BI_Multi_Attention.GCN_GRU_BI_Multi_Attention`
-- **Description**: Builds upon the GCN_GRU_BI_Attention model by adding multiple attention layers, further refining the model's focus on significant temporal features.
-- **Parameters**:
-  - Same as GCN_GRU_BI_Attention
-
-#
-
 ### GCN_GRU_TeacherForcing
 - **Path**: `models.GCN_GRU_TeacherForcing.GCN_GRU_TeacherForcing`
 - **Description**: Adopts teacher forcing in training the GCN_GRU model, leading to faster convergence and improved model performance by using the true past output as input.
@@ -404,22 +388,6 @@ sequenceDiagram
     Concat->>Attention: Focus on relevant features (Optional)
     Attention->>Output: Predict traffic conditions
 ```
-
-#
-
-### GCN_LSTM_BI_Attention
-- **Path**: `models.GCN_LSTM_BI_Attention.GCN_LSTM_BI_Attention`
-- **Description**: Adds an attention mechanism to the bidirectional GCN_LSTM model, improving its ability to prioritize important temporal segments for prediction.
-- **Parameters**:
-  - Same as GCN_LSTM_BI
-
-#
-
-### GCN_LSTM_BI_Multi_Attention
-- **Path**: `models.GCN_LSTM_BI_Multi_Attention.GCN_LSTM_BI_Multi_Attention`
-- **Description**: Further extends the GCN_LSTM_BI_Attention model by utilizing multiple attention layers, enhancing the model's predictive accuracy by focusing on multiple relevant time periods simultaneously.
-- **Parameters**:
-  - Same as GCN_LSTM_BI_Attention
 
 #
 

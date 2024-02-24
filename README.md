@@ -53,18 +53,24 @@ Consider we have a network of traffic sensors placed at various points on roads.
 sequenceDiagram
     participant Input as Input Features (x_i)
     participant Linear as Linear Transformation (Wx_i)
-    participant Activation as Activation Function (phi)
-    participant Aggregated as Aggregated Features (x''_i)
-    participant Output as Output Features (x'_i)
+    participant Residual as Optional Residual Connection(x'_i)
+    participant Aggregated as Aggregated Features (Σ_j∈N(i) x'_j)
+    participant BatchNorm as Optional Batch Normalization
+    participant Activation as Activation Function (phi(x))
+    participant Output as Output Features (x''_i)
 
     Input ->> Linear: Apply weights
-    Note over Linear: x'_i = Wx_i
-    Linear ->> Activation: Apply activation
-    Note over Activation: ReLU or custom function
-    Activation ->> Aggregated: Identify Neighbors (N(i))
-    Aggregated ->> Output: Aggregate neighbor features
-    Note over Output: x''_i = Σ_j∈N(i) x'_j
+    Note over Linear: Equation 1 (x'_i = Wx_i)
+    Linear ->> Residual: Check for residual
+    Residual -->> Aggregated: Proceed to aggregation
+    Aggregated ->> BatchNorm: Check for batch norm
+    Note over Aggregated: Equation 2 (Σ_j∈N(i) x'_j)
+    BatchNorm -->> Activation: Proceed to activation
+    Note over Activation: phi(x) = ReLU or custom function
+    Activation ->> Output: Generate output features
+
 ```
+
 
 
 

@@ -71,10 +71,6 @@ sequenceDiagram
 
 ```
 
-
-
-
-
 #### Batch Normalization and Activation
 
 Following aggregation, optional batch normalization can be applied to stabilize learning and improve convergence. An activation function, typically ReLU, introduces non-linearities into the model, enabling it to capture complex relationships in the data.
@@ -91,6 +87,7 @@ Implemented using PyTorch and PyTorch Geometric, the `GCN_CONV` model benefits f
 
 In the context of traffic prediction, the `GCN_CONV` model enables the effective incorporation of spatial data, such as road networks, into the forecasting framework. By modeling traffic networks as graphs, where nodes represent intersections or segments of interest and edges capture the connectivity and relationships between these points, the `GCN_CONV` layer updates traffic state predictions based on both the current state and the spatial context provided by the surrounding network structure.
 
+#
 
 ### ARIMA_NN
 - **Path**: `models.ARIMA_NN.ARIMA_NN`
@@ -100,6 +97,8 @@ In the context of traffic prediction, the `GCN_CONV` model enables the effective
   - `p`: 5
   - `d`: 1
   - `q`: 0
+
+#
 
 ### GCN_GRU
 - **Path**: `models.GCN_GRU.GCN_GRU`
@@ -165,7 +164,6 @@ Output predictions are generated through linear transformation:
 
 This model's integrated approach to spatial and temporal processing empowers it to predict complex patterns in graph-structured time-series data effectively.
 
-
 ```mermaid
 sequenceDiagram
     participant Input as Input Features (x_i)
@@ -203,11 +201,58 @@ sequenceDiagram
 
 This sequential workflow allows the `GCN_GRU` model to leverage both the spatial layout of the traffic sensor network and the temporal evolution of traffic conditions, offering a comprehensive approach to traffic prediction.
 
+#
+
 ### GCN_GRU_BI
 - **Path**: `models.GCN_GRU_BI.GCN_GRU_BI`
 - **Description**: Extends the GCN_GRU model by introducing bidirectional GRU layers, enhancing its ability to understand complex temporal relationships in traffic data.
 - **Parameters**:
   - Same as GCN_GRU
+
+#### GCN_GRU_BI Model Overview
+
+The `GCN_GRU_BI` model enhances the `GCN_GRU` architecture by integrating a Bidirectional Gated Recurrent Unit (Bi-GRU) for temporal feature processing. This modification aims to capture temporal dependencies in both directions along the time axis, offering a more nuanced understanding of traffic conditions in sensor networks.
+
+#### Bidirectional Temporal Feature Processing
+
+- **Bidirectional GRU (Bi-GRU) Layer**: The key difference in `GCN_GRU_BI` is the use of a bidirectional GRU layer, which processes the temporal sequence in both forward and backward directions. This is mathematically represented by:
+  - Forward Pass: ![Forward GRU](https://latex.codecogs.com/png.latex?%5Coverrightarrow%7Bh_t%7D%20%3D%20%5Ctext%7BGRU%7D%28x_t%2C%20%5Coverrightarrow%7Bh_%7Bt-1%7D%7D%29)
+  - Backward Pass: ![Backward GRU](https://latex.codecogs.com/png.latex?%5Coverleftarrow%7Bh_t%7D%20%3D%20%5Ctext%7BGRU%7D%28x_t%2C%20%5Coverleftarrow%7Bh_%7Bt%2B1%7D%7D%29)
+  - Where \(x_t\) is the input at time step \(t\), \(\overrightarrow{h_t}\) is the forward hidden state, and \(\overleftarrow{h_t}\) is the backward hidden state.
+
+- **Enhanced Temporal Understanding**: By analyzing traffic data from both past and future contexts, the Bi-GRU layer provides a richer feature set for each time step, potentially improving the model's predictive accuracy for traffic speed and density.
+
+#### Output Layer Adaptation
+
+- **Adapted Output Layer**: Due to the bidirectional nature of the GRU, the output feature size is doubled, as it concatenates the forward and backward hidden states. Consequently, the output layer's input size is adjusted to accommodate this:
+  - ![Output Layer](https://latex.codecogs.com/png.latex?y%20%3D%20W_o%20%5B%5Coverrightarrow%7Bh_t%7D%3B%20%5Coverleftarrow%7Bh_t%7D%5D%20%2B%20b_o)
+  - Where ![Concatenation of Forward and Backward Hidden States](https://latex.codecogs.com/png.latex?\inline&space;\bg_white&space;\left[\overrightarrow{h_t};\overleftarrow{h_t}\right]) represents the concatenation of the forward and backward hidden states at time step \(t\), \(W_o\) is the weight matrix of the output layer, \(b_o\) is the bias, and \(y\) is the output prediction.
+
+#### Model Architecture Summary
+
+- **Spatial Feature Extraction**: Similar to `GCN_GRU`, spatial features are extracted using a series of GCN layers, each followed by batch normalization and dropout for regularization.
+- **Temporal Feature Extraction**: The bidirectional GRU layer provides a comprehensive temporal analysis, enhancing the model's ability to capture traffic dynamics.
+- **Output Prediction**: The adapted output layer generates predictions for traffic conditions, such as vehicle speed flow and density, at each sensor node, leveraging the enriched feature representation provided by the Bi-GRU layer.
+
+This bidirectional approach ensures that the `GCN_GRU_BI` model can effectively utilize the full temporal context of the traffic data, making it particularly well-suited for applications in traffic forecasting where both historical trends and future predictions are vital.
+
+```mermaid
+sequenceDiagram
+    participant Input as Input Features (x_i)
+    participant GCN as GCN Layers
+    participant BiGRU as Bi-GRU Layer
+    participant Concat as Concatenate Forward & Backward States
+    participant Attention as Optional Attention Layer
+    participant Output as Output Prediction
+
+    Input->>GCN: Spatial feature processing
+    GCN->>BiGRU: Temporal feature processing (Both Directions)
+    BiGRU->>Concat: Combine hidden states
+    Concat->>Attention: Focus on relevant features (Optional)
+    Attention->>Output: Predict traffic conditions
+```
+
+#
 
 ### GCN_GRU_BI_Attention
 - **Path**: `models.GCN_GRU_BI_Attention.GCN_GRU_BI_Attention`
@@ -215,11 +260,15 @@ This sequential workflow allows the `GCN_GRU` model to leverage both the spatial
 - **Parameters**:
   - Same as GCN_GRU_BI
 
+#
+
 ### GCN_GRU_BI_Multi_Attention
 - **Path**: `models.GCN_GRU_BI_Multi_Attention.GCN_GRU_BI_Multi_Attention`
 - **Description**: Builds upon the GCN_GRU_BI_Attention model by adding multiple attention layers, further refining the model's focus on significant temporal features.
 - **Parameters**:
   - Same as GCN_GRU_BI_Attention
+
+#
 
 ### GCN_GRU_TeacherForcing
 - **Path**: `models.GCN_GRU_TeacherForcing.GCN_GRU_TeacherForcing`
@@ -227,11 +276,15 @@ This sequential workflow allows the `GCN_GRU` model to leverage both the spatial
 - **Parameters**:
   - Same as GCN_GRU
 
+#
+
 ### GCN_LSTM
 - **Path**: `models.GCN_LSTM.GCN_LSTM`
 - **Description**: Integrates GCN with Long Short-Term Memory (LSTM) networks, aiming to exploit both spatial dependencies and long-term temporal patterns in traffic data.
 - **Parameters**:
   - Same as GCN_GRU
+
+#
 
 ### GCN_LSTM_BI
 - **Path**: `models.GCN_LSTM_BI.GCN_LSTM_BI`
@@ -239,17 +292,23 @@ This sequential workflow allows the `GCN_GRU` model to leverage both the spatial
 - **Parameters**:
   - Same as GCN_LSTM
 
+#
+
 ### GCN_LSTM_BI_Attention
 - **Path**: `models.GCN_LSTM_BI_Attention.GCN_LSTM_BI_Attention`
 - **Description**: Adds an attention mechanism to the bidirectional GCN_LSTM model, improving its ability to prioritize important temporal segments for prediction.
 - **Parameters**:
   - Same as GCN_LSTM_BI
 
+#
+
 ### GCN_LSTM_BI_Multi_Attention
 - **Path**: `models.GCN_LSTM_BI_Multi_Attention.GCN_LSTM_BI_Multi_Attention`
 - **Description**: Further extends the GCN_LSTM_BI_Attention model by utilizing multiple attention layers, enhancing the model's predictive accuracy by focusing on multiple relevant time periods simultaneously.
 - **Parameters**:
   - Same as GCN_LSTM_BI_Attention
+
+#
 
 ### GCN_LSTM_BI_Multi_Attention_Weather
 - **Path**: `models.GCN_LSTM_BI_Multi_Attention_Weather.GCN_LSTM_BI_Multi_Attention_Weather`

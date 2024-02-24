@@ -41,22 +41,22 @@ Consider we have a network of traffic sensors placed at various points on roads.
 
 ```mermaid
 graph TD
-    A[Sensor A<br>Speed: ?] --> B[Sensor B<br>Speed: ?]
-    A <--> C[Sensor C<br>Speed: ?]
-    B <--> D[Sensor D<br>Speed: ?]
-    C <--> D
-    B <--> E[Sensor E<br>Speed: ?]
-    C <--> E
-    D <--> E
-    E <--> F[Sensor F<br>Speed: ?]
+    A[Sensor A<br>Speed: ?] <---> B[Sensor B<br>Speed: ?]
+    A <---> C[Sensor C<br>Speed: ?]
+    B <---> D[Sensor D<br>Speed: ?]
+    C <---> D
+    B <---> E[Sensor E<br>Speed: ?]
+    C <---> E
+    D <---> E
+    E <---> F[Sensor F<br>Speed: ?]
 
-    A <-->|Aggregates info| B
-    B <-->|Aggregates info| D
-    C <-->|Aggregates info| D
-    B <-->|Aggregates info| E
-    C <-->|Aggregates info| E
-    D <-->|Aggregates info| E
-    E <-->|Aggregates info| F
+    A <--->|Aggregates info| B
+    B <--->|Aggregates info| D
+    C <--->|Aggregates info| D
+    B <--->|Aggregates info| E
+    C <--->|Aggregates info| E
+    D <--->|Aggregates info| E
+    E <--->|Aggregates info| F
 
     classDef sensor fill:#f9f,stroke:#333,stroke-width:4px;
     class A,B,C,D,E,F sensor;

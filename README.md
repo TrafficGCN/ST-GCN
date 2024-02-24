@@ -364,6 +364,47 @@ sequenceDiagram
 - **Parameters**:
   - Same as GCN_LSTM
 
+
+#### GCN_LSTM_BI Model Overview
+
+The `GCN_LSTM_BI` model enhances the `GCN_LSTM` architecture by integrating a Bidirectional Long Short-Term Memory (Bi-LSTM) network for temporal feature processing. This bidirectional approach enables the model to capture temporal relationships in both forward and backward directions across time, providing a more nuanced understanding of sequences in traffic forecasting applications.
+
+#### Key Differences from GCN_LSTM
+
+- **Bidirectional LSTM (Bi-LSTM) Layer**: The primary distinction of `GCN_LSTM_BI` lies in its use of a Bi-LSTM layer, which processes temporal sequences from both directions. This dual processing path allows the model to learn from past and future contexts simultaneously, enhancing its predictive capabilities for complex temporal patterns.
+  - The Bi-LSTM mechanism is mathematically represented as follows:
+    - Forward Pass: ![Forward LSTM](https://latex.codecogs.com/png.latex?%5Coverrightarrow%7Bh_t%7D%20%3D%20LSTM%28x_t%2C%20%5Coverrightarrow%7Bh_%7Bt-1%7D%7D%29)
+    - Backward Pass: ![Backward LSTM](https://latex.codecogs.com/png.latex?%5Coverleftarrow%7Bh_t%7D%20%3D%20LSTM%28x_t%2C%20%5Coverleftarrow%7Bh_%7Bt%2B1%7D%7D%29)
+    - where \(x_t\) is the input at time step \(t\), \(\overrightarrow{h_t}\) and \(\overleftarrow{h_t}\) are the hidden states from the forward and backward passes, respectively.
+
+- **Output Layer Adaptation**: Due to the bidirectional nature of the LSTM, the output dimensionality is doubled, as it concatenates the forward and backward hidden states. Thus, the model's output layer is adapted to handle this increased feature size, enhancing its ability to utilize the rich temporal information provided by the Bi-LSTM.
+  - The output layer equation is adjusted to accommodate bidirectional outputs: ![Output Layer](https://latex.codecogs.com/png.latex?y%20%3D%20W_o%20%5B%5Coverrightarrow%7Bh_t%7D%3B%20%5Coverleftarrow%7Bh_t%7D%5D%20%2B%20b_o)
+    - where ![Concatenation of Forward and Backward Hidden States](https://latex.codecogs.com/png.latex?%5Cleft%5B%20%5Coverrightarrow%7Bh_t%7D%3B%20%5Coverleftarrow%7Bh_t%7D%20%5Cright%5D) represents the concatenation of the forward and backward hidden states, \(W_o\) is the output layer's weight matrix, \(b_o\) is the bias term, and \(y\) is the predicted output.
+
+#### Model Architecture Summary
+
+- **Spatial Feature Extraction**: Utilizes a series of GCN layers for extracting spatial features from the graph-structured data, capturing the complex relationships between nodes (e.g., traffic sensors) within the network.
+- **Temporal Feature Extraction**: Employs a Bi-LSTM layer to model the temporal dynamics of the data, benefiting from the ability to consider both past and future context for each time step.
+- **Output Prediction**: Generates predictions for traffic conditions, such as vehicle speed flow and density, leveraging the enriched spatial-temporal feature representation produced by the combined GCN and Bi-LSTM layers.
+
+This bidirectional approach ensures that `GCN_LSTM_BI` can effectively leverage the full temporal context of traffic data, making it particularly suitable for traffic forecasting tasks where both historical trends and anticipatory insights are crucial for accurate predictions.
+
+```mermaid
+sequenceDiagram
+    participant Input as Input Features (x_i)
+    participant GCN as GCN Layers
+    participant BiLSTM as Bi-LSTM Layer
+    participant Concat as Concatenate Forward & Backward States
+    participant Attention as Optional Attention Layer
+    participant Output as Output Prediction
+
+    Input->>GCN: Spatial feature processing
+    GCN->>BiLSTM: Temporal feature processing (Both Directions)
+    BiLSTM->>Concat: Combine hidden states
+    Concat->>Attention: Focus on relevant features (Optional)
+    Attention->>Output: Predict traffic conditions
+```
+
 #
 
 ### GCN_LSTM_BI_Attention

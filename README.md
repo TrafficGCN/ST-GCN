@@ -1,7 +1,7 @@
 # Spatio-Temporal Graph Convolutional Network (ST-GCN)
 Base models for graph convolutional networks.
 
-### Citations
+## Citations
 
 1. For the Los Angeles metr-la and Santa Clara pems-bay datasets cite: Kwak, Semin. (2020). PEMS-BAY and METR-LA in csv [Data set]. Zenodo. https://doi.org/10.5281/zenodo.5146275
 
@@ -15,17 +15,17 @@ Base models for graph convolutional networks.
 
 6. For Shenzhen cite: https://github.com/lehaifeng/T-GCN
 
-### Traffic Prediction Models
+## Traffic Prediction Models
 
-#### GCN_CONV Model Detailed Overview
+### GCN_CONV
 
 The `GCN_CONV` model represents a sophisticated adaptation of graph convolutional networks (GCNs), aimed at efficiently capturing spatial relationships within graph-structured data. This custom layer is an integral part of our traffic prediction models, enabling the incorporation of spatial dependencies into the predictive analytics framework. Its design is based on extending the `MessagePassing` class from the PyTorch Geometric (PyG) library, which provides a flexible and powerful foundation for implementing graph neural networks (GNNs).
 
-##### Theoretical Background
+#### Theoretical Background
 
 Graph convolutional networks generalize convolutional neural networks (CNNs) to graph-structured data, allowing for the processing of non-Euclidean domains. The core principle behind GCNs is to update a node's feature representation by aggregating feature information from its neighbors. This process, often referred to as message passing, enables the capture of local graph topology within node features.
 
-##### Message Passing Mechanism
+#### Message Passing Mechanism
 
 The `GCN_CONV` model implements a message passing mechanism where messages (features) from neighboring nodes are aggregated to update each node's features. The process can be formally described by the following steps:
 
@@ -75,24 +75,24 @@ sequenceDiagram
 
 
 
-##### Batch Normalization and Activation
+#### Batch Normalization and Activation
 
 Following aggregation, optional batch normalization can be applied to stabilize learning and improve convergence. An activation function, typically ReLU, introduces non-linearities into the model, enabling it to capture complex relationships in the data.
 
-##### Residual Connections
+#### Residual Connections
 
 The model supports residual connections, where the input features are added to the output of the activation function. This design choice is crucial for training deeper models by alleviating the vanishing gradient problem and facilitating the learning of identity mappings.
 
-##### Practical Implementation
+#### Practical Implementation
 
 Implemented using PyTorch and PyTorch Geometric, the `GCN_CONV` model benefits from efficient computation and ease of integration with other neural network components. Its design is modular, allowing for easy customization of features such as the activation function, the use of batch normalization, and the inclusion of residual connections to suit specific requirements.
 
-##### Use in Traffic Prediction
+#### Use in Traffic Prediction
 
 In the context of traffic prediction, the `GCN_CONV` model enables the effective incorporation of spatial data, such as road networks, into the forecasting framework. By modeling traffic networks as graphs, where nodes represent intersections or segments of interest and edges capture the connectivity and relationships between these points, the `GCN_CONV` layer updates traffic state predictions based on both the current state and the spatial context provided by the surrounding network structure.
 
 
-#### ARIMA_NN
+### ARIMA_NN
 - **Path**: `models.ARIMA_NN.ARIMA_NN`
 - **Description**: Combines the ARIMA model with neural networks to capture both linear and non-linear patterns in traffic data. It is designed for univariate time series forecasting.
 - **Parameters**:
@@ -101,7 +101,7 @@ In the context of traffic prediction, the `GCN_CONV` model enables the effective
   - `d`: 1
   - `q`: 0
 
-#### GCN_GRU
+### GCN_GRU
 - **Path**: `models.GCN_GRU.GCN_GRU`
 - **Description**: Leverages Graph Convolutional Networks (GCN) and Gated Recurrent Unit (GRU) for spatial-temporal traffic forecasting. It captures the spatial dependencies through GCN and temporal dynamics through GRU layers.
 - **Parameters**:
@@ -111,55 +111,147 @@ In the context of traffic prediction, the `GCN_CONV` model enables the effective
   - `num_rnn_layers`: 3
   - `dropout`: 0
 
-#### GCN_GRU_BI
+#### GCN_GRU Model Overview
+
+The `GCN_GRU` model adeptly combines Graph Convolutional Networks (GCNs) for spatial feature extraction with Gated Recurrent Units (GRUs) for capturing temporal dynamics in the traffic data.
+
+#### Spatial Feature Processing with GCN Layers
+
+Spatial features within the graph are processed through GCN layers, described by:
+
+- **GCN Layer Equation**:
+  ![GCN Layer Equation](https://latex.codecogs.com/png.latex?h^{(l+1)}%20=%20\sigma(\tilde{B}%20\tilde{D}^{-1}%20\tilde{A}%20H^{(l)}%20W^{(l)}))
+
+  Where:
+  - `H^{(l)}`: node features matrix at layer `l`,
+  - `Ã`: adjacency matrix with self-loops,
+  - `D̃`: diagonal node degree matrix,
+  - `W^{(l)}`: weight matrix at layer `l`,
+  - `σ`: non-linear activation function (ReLU),
+  - `B̃`: normalization coefficient matrix,
+  - `h^{(l+1)}`: node features for the next layer.
+
+Batch normalization and dropout applied post-GCN layer enhance regularization:
+
+- **Batch Normalization**: Standardizes features to zero mean and unit variance.
+- **Dropout**: Mitigates overfitting by randomly omitting features with probability `p`.
+
+#### Temporal Feature Processing with GRU Layer
+
+Temporal dynamics are modeled using a GRU layer:
+
+- **GRU Equation**:
+  ![GRU Equation](https://latex.codecogs.com/png.latex?(h_t,%20h_{t+1})%20=%20GRU(h_t,%20h_{t-1}))
+
+  Where `h_t` is the hidden state at time `t`, updated by the GRU function based on the previous state and current input.
+
+#### Optional Attention Mechanism
+
+The attention mechanism refines focus on pertinent temporal features:
+
+- **Attention Equation**:
+  ![Attention Equation](https://latex.codecogs.com/png.latex?\alpha_t%20=%20\text{softmax}(v^T%20\tanh(W_h%20h_t%20+%20b)))
+
+  Where `α_t` denotes the attention weight for time `t`, with `W_h`, `b`, and `v^T` as learnable parameters, ensuring attention weights sum to 1 across all time steps.
+
+#### Output Prediction
+
+Output predictions are generated through linear transformation:
+
+- **Output Layer Equation**:
+  ![Output Layer Equation](https://latex.codecogs.com/png.latex?y%20=%20W_o%20h_t%20+%20b_o)
+
+  Here, `y` represents the output prediction, with `W_o` and `b_o` being the weight and bias of the output layer, respectively, and `h_t` is the final hidden state or attention-weighted feature representation.
+
+This model's integrated approach to spatial and temporal processing empowers it to predict complex patterns in graph-structured time-series data effectively.
+
+
+```mermaid
+sequenceDiagram
+    participant Input as Input Features (x_i)
+    participant GCN as GCN Layers
+    participant GRU as GRU Layer
+    participant Attention as Optional Attention Layer
+    participant Output as Output Prediction
+
+    Input->>GCN: Spatial feature processing
+    GCN->>GRU: Temporal feature processing
+    GRU->>Attention: Focus on relevant features
+    Attention->>Output: Predict traffic conditions
+```
+
+#### Step-by-Step Explanation of the GCN_GRU Model Diagram
+
+1. **Input Features (x_i)**: The process begins with the input features of the traffic sensor nodes. These features can include current traffic speed, density, or any other relevant metrics captured by the sensors.
+
+2. **Spatial Feature Processing with GCN Layers**:
+   - The input features are first processed through one or more GCN layers.
+   - These layers update each sensor node's features by aggregating information from its neighboring nodes, effectively capturing the spatial dependencies within the traffic network.
+   - This step ensures that the model considers how traffic conditions at one sensor are influenced by conditions at nearby sensors.
+
+3. **Temporal Feature Processing with GRU Layer**:
+   - The features processed by the GCN layers, which now incorporate spatial context, are fed into a GRU layer.
+   - The GRU layer models the temporal dynamics of the traffic conditions, learning patterns over time such as daily traffic volume changes or the impact of specific events on traffic flow.
+   - This allows the model to understand how traffic conditions evolve and predict future states based on past and present observations.
+
+4. **Optional Attention Mechanism**:
+   - An optional attention layer can be applied after the GRU layer to refine the model's focus on the most relevant temporal features for prediction.
+
+5. **Output Prediction**:
+   - The final step involves making predictions regarding traffic conditions using the temporally processed features, optionally refined by the attention mechanism.
+   - The model outputs predictions for each sensor node, such as expected traffic speed and density, providing actionable insights for traffic management and planning.
+
+This sequential workflow allows the `GCN_GRU` model to leverage both the spatial layout of the traffic sensor network and the temporal evolution of traffic conditions, offering a comprehensive approach to traffic prediction.
+
+### GCN_GRU_BI
 - **Path**: `models.GCN_GRU_BI.GCN_GRU_BI`
 - **Description**: Extends the GCN_GRU model by introducing bidirectional GRU layers, enhancing its ability to understand complex temporal relationships in traffic data.
 - **Parameters**:
   - Same as GCN_GRU
 
-#### GCN_GRU_BI_Attention
+### GCN_GRU_BI_Attention
 - **Path**: `models.GCN_GRU_BI_Attention.GCN_GRU_BI_Attention`
 - **Description**: Incorporates attention mechanisms into the GCN_GRU_BI model, allowing it to focus on critical temporal intervals for improved prediction accuracy.
 - **Parameters**:
   - Same as GCN_GRU_BI
 
-#### GCN_GRU_BI_Multi_Attention
+### GCN_GRU_BI_Multi_Attention
 - **Path**: `models.GCN_GRU_BI_Multi_Attention.GCN_GRU_BI_Multi_Attention`
 - **Description**: Builds upon the GCN_GRU_BI_Attention model by adding multiple attention layers, further refining the model's focus on significant temporal features.
 - **Parameters**:
   - Same as GCN_GRU_BI_Attention
 
-#### GCN_GRU_TeacherForcing
+### GCN_GRU_TeacherForcing
 - **Path**: `models.GCN_GRU_TeacherForcing.GCN_GRU_TeacherForcing`
 - **Description**: Adopts teacher forcing in training the GCN_GRU model, leading to faster convergence and improved model performance by using the true past output as input.
 - **Parameters**:
   - Same as GCN_GRU
 
-#### GCN_LSTM
+### GCN_LSTM
 - **Path**: `models.GCN_LSTM.GCN_LSTM`
 - **Description**: Integrates GCN with Long Short-Term Memory (LSTM) networks, aiming to exploit both spatial dependencies and long-term temporal patterns in traffic data.
 - **Parameters**:
   - Same as GCN_GRU
 
-#### GCN_LSTM_BI
+### GCN_LSTM_BI
 - **Path**: `models.GCN_LSTM_BI.GCN_LSTM_BI`
 - **Description**: Enhances the GCN_LSTM model by incorporating bidirectional LSTM layers, offering a more comprehensive analysis of temporal sequences.
 - **Parameters**:
   - Same as GCN_LSTM
 
-#### GCN_LSTM_BI_Attention
+### GCN_LSTM_BI_Attention
 - **Path**: `models.GCN_LSTM_BI_Attention.GCN_LSTM_BI_Attention`
 - **Description**: Adds an attention mechanism to the bidirectional GCN_LSTM model, improving its ability to prioritize important temporal segments for prediction.
 - **Parameters**:
   - Same as GCN_LSTM_BI
 
-#### GCN_LSTM_BI_Multi_Attention
+### GCN_LSTM_BI_Multi_Attention
 - **Path**: `models.GCN_LSTM_BI_Multi_Attention.GCN_LSTM_BI_Multi_Attention`
 - **Description**: Further extends the GCN_LSTM_BI_Attention model by utilizing multiple attention layers, enhancing the model's predictive accuracy by focusing on multiple relevant time periods simultaneously.
 - **Parameters**:
   - Same as GCN_LSTM_BI_Attention
 
-#### GCN_LSTM_BI_Multi_Attention_Weather
+### GCN_LSTM_BI_Multi_Attention_Weather
 - **Path**: `models.GCN_LSTM_BI_Multi_Attention_Weather.GCN_LSTM_BI_Multi_Attention_Weather`
 - **Description**: Incorporates weather data into the GCN_LSTM_BI_Multi_Attention model, acknowledging the impact of weather conditions on traffic patterns to improve forecasting accuracy.
 - **Parameters**:
@@ -169,7 +261,7 @@ In the context of traffic prediction, the `GCN_CONV` model enables the effective
   - `
 
 
-### Sensor Predictions
+## Sensor Predictions
 
 <img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/metr-la/sensors/sensor_716328/sensor_716328_predictions.jpg?raw=true" width="46%" align="left">
 <img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/sensors/sensor_400073/sensor_400073_predictions.jpg?raw=true" width="46%" align="left">
@@ -192,7 +284,7 @@ In the context of traffic prediction, the `GCN_CONV` model enables the effective
 <br />
 <br />
 
-### Graph CFD Error Distribution
+## Graph CFD Error Distribution
 
 <img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/acc_distribution.jpg?raw=true" width="17%" align="left">
 <img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/pems-bay/stats/r%C2%B2_distribution.jpg?raw=true" width="17%" align="left">

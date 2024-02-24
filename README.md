@@ -40,26 +40,23 @@ The `GCN_CONV` model implements a message passing mechanism where messages (feat
 Consider we have a network of traffic sensors placed at various points on roads. Each sensor can communicate with its neighboring sensors to share and update information about traffic conditions like speed flow or density. This information is sent over the network graph to create an aggregated understanding of the conditions.
 
 ```mermaid
-graph TD
-    A[Sensor A<br>Speed: ?] <---> B[Sensor B<br>Speed: ?]
-    A <---> C[Sensor C<br>Speed: ?]
-    B <---> D[Sensor D<br>Speed: ?]
-    C <---> D
-    B <---> E[Sensor E<br>Speed: ?]
-    C <---> E
-    D <---> E
-    E <---> F[Sensor F<br>Speed: ?]
+sequenceDiagram
+    participant Input as Input Features (H^(k-1))
+    participant ChosenNode as Chosen Node (i)
+    participant Neighbors as Neighbor Nodes (N(i))
+    participant Aggregation as Aggregation (A~ * H^(k-1))
+    participant LinearTrans as Linear Transformation (W^(k))
+    participant Activation as Nonlinear Activation (phi)
+    participant Output as Output Features (H^(k))
 
-    A <--->|Aggregates info| B
-    B <--->|Aggregates info| D
-    C <--->|Aggregates info| D
-    B <--->|Aggregates info| E
-    C <--->|Aggregates info| E
-    D <--->|Aggregates info| E
-    E <--->|Aggregates info| F
+    Input ->> ChosenNode: Feature Vector
+    ChosenNode ->> Neighbors: Identify Neighbors
+    Neighbors -->> Aggregation: Aggregate Neighbor Features
+    Aggregation ->> LinearTrans: Apply Weights
+    LinearTrans ->> Activation: Apply Activation Function
+    Activation -->> Output: Update Feature Vector
 
-    classDef sensor fill:#f9f,stroke:#333,stroke-width:4px;
-    class A,B,C,D,E,F sensor;
+
 ```
 
 ##### Batch Normalization and Activation

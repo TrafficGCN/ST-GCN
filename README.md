@@ -433,6 +433,69 @@ sequenceDiagram
   - `
 
 
+#### GCN_LSTM_BI_Multi_Attention_Weather_Separate Model Overview
+
+The `GCN_LSTM_BI_Multi_Attention_Weather_Separate` model leverages graph convolutional networks (GCNs) and bidirectional Long Short-Term Memory (Bi-LSTM) networks, enhanced with multiple attention mechanisms, to analyze graph-structured time-series data. This model is uniquely designed to process traffic speed data and air temperature data separately, recognizing the impact of weather conditions on traffic dynamics. It aims to improve traffic forecasting by incorporating both spatial relationships and temporal patterns, along with the influence of weather variables.
+
+#### Key Features
+
+- **Separate Processing Pathways**: The model features distinct processing pathways for traffic speed and air temperature data, each consisting of GCN layers for spatial feature extraction followed by Bi-LSTM layers for temporal dynamics modeling. This dual-pathway approach allows the model to capture the nuanced effects of weather on traffic conditions independently before fusing the information.
+  - Spatial feature extraction: ![GCN Layer](https://latex.codecogs.com/png.latex?h^{(l+1)}%20=%20\sigma(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}}H^{(l)}W^{(l)}))
+  - Temporal dynamics with Bi-LSTM: ![Bi-LSTM](https://latex.codecogs.com/png.latex?%5Coverrightarrow%7Bh_t%7D,%20%5Coverleftarrow%7Bh_t%7D%20=%20\text{Bi-LSTM}(x_t))
+
+- **Multi-Attention Mechanisms**: Post-processing, the model employs multiple attention mechanisms to refine its focus on the most predictive features. This includes separate attention layers for speed and temperature data and a spatio-temporal attention layer that combines and weights features across both spatial and temporal dimensions.
+  - Attention for feature refinement: ![Attention](https://latex.codecogs.com/png.latex?%5Calpha%20=%20\text{softmax}(W%20h%20+%20b))
+  - Spatio-temporal attention to leverage spatial neighbors and temporal lags: ![Spatio-Temporal Attention](https://latex.codecogs.com/png.latex?\text{Combined%20Attention%20Weights})
+
+- **Fusion and Output**: The separately processed and attention-refined features from the speed and temperature pathways are fused to generate a comprehensive set of features, which are then used to predict traffic conditions, accounting for the influence of weather.
+
+
+- **Fusion and Output**: After processing the traffic speed and air temperature data through their respective pathways, including GCN layers, Bi-LSTM layers, and attention mechanisms, the model fuses these refined features to create a comprehensive representation that accounts for both traffic conditions and environmental factors.
+
+    ![Feature Fusion](https://latex.codecogs.com/png.latex?F_%7B%5Ctext%7Bcombined%7D%7D%20%3D%20%5Ctext%7BConcat%7D%28F_%7B%5Ctext%7Bspeed%7D%7D%5E%7B%5Ctext%7Batt%7D%7D%2C%20F_%7B%5Ctext%7Btemp%7D%7D%5E%7B%5Ctext%7Batt%7D%7D%29)
+
+    Where ![F_combined](https://latex.codecogs.com/png.latex?F_%7B%5Ctext%7Bcombined%7D%7D) represents the fused feature set, ![F_speed^att](https://latex.codecogs.com/png.latex?F_%7B%5Ctext%7Bspeed%7D%7D%5E%7B%5Ctext%7Batt%7D%7D) denotes the attention-refined features from the speed pathway, and ![F_temp^att](https://latex.codecogs.com/png.latex?F_%7B%5Ctext%7Btemp%7D%7D%5E%7B%5Ctext%7Batt%7D%7D) denotes the attention-refined features from the temperature pathway. The Concat operation concatenates these feature sets along the feature dimension.
+
+- The fused features are then passed through an output layer to generate the final traffic condition predictions.
+
+    ![Output Prediction](https://latex.codecogs.com/png.latex?y%20%3D%20W_o%20F_%7B%5Ctext%7Bcombined%7D%7D%20%2B%20b_o)
+
+    Where ![y](https://latex.codecogs.com/png.latex?y) is the vector of predicted traffic conditions (e.g., speed and density), ![W_o](https://latex.codecogs.com/png.latex?W_o) is the weight matrix of the output layer, ![F_combined](https://latex.codecogs.com/png.latex?F_%7B%5Ctext%7Bcombined%7D%7D) is the fused feature set from both the speed and temperature data streams, and ![b_o](https://latex.codecogs.com/png.latex?b_o) is the bias term.
+
+```mermaid
+sequenceDiagram
+    participant Input as Input Features
+    participant Split as Split Speed & Temp Data
+    participant GCN as GCN Layers
+    participant BiLSTM as Bi-LSTM Layers
+    participant Attention as Attention Mechanisms
+    participant Fusion as Feature Fusion
+    participant Output as Output Prediction
+
+    Input->>Split: Divide features into Speed and Temperature
+    Note over Split,GCN: Split data into two parallel streams
+    par GCN Processing for Speed
+        Split->>GCN: Process Speed Data through GCN Layers
+        GCN->>BiLSTM: Forward Speed Data to Bi-LSTM
+        BiLSTM->>Attention: Apply Attention to Speed Data
+        Attention->>Fusion: Forward Refined Speed Features
+    and GCN Processing for Temperature
+        Split->>GCN: Process Temperature Data through GCN Layers
+        GCN->>BiLSTM: Forward Temperature Data to Bi-LSTM
+        BiLSTM->>Attention: Apply Attention to Temperature Data
+        Attention->>Fusion: Forward Refined Temperature Features
+    end
+    Fusion->>Output: Predict Traffic Conditions
+```
+
+
+#### Model Architecture Summary
+
+The `GCN_LSTM_BI_Multi_Attention_Weather_Separate` model's architecture is meticulously designed to handle the complexities of predicting traffic conditions influenced by weather. By processing traffic speed and air temperature data through separate but parallel pathways, and applying both attention and spatio-temporal attention mechanisms, the model aims to provide accurate, weather-informed traffic forecasts.
+
+
+
+
 ## Sensor Predictions
 
 <img src="https://github.com/ThomasAFink/ST-GCN/blob/main/output/metr-la/sensors/sensor_716328/sensor_716328_predictions.jpg?raw=true" width="46%" align="left">

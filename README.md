@@ -59,6 +59,22 @@ sequenceDiagram
 
 ```
 
+```mermaid
+sequenceDiagram
+    participant Input as Input Features (x_i)
+    participant Linear as Linear Transformation (Wx_i)
+    participant Aggregated as Aggregated Features (x''_i)
+    participant Output as Output Features (x'_i)
+
+    Input ->> Linear: Equation 1
+    Note over Linear: x'_i = Wx_i
+    Linear ->> Aggregated: Identify Neighbors (N(i))
+    Aggregated ->> Output: Equation 2
+    Note over Output: x''_i = Σ_j∈N(i) x'_j
+```
+
+
+
 ##### Batch Normalization and Activation
 
 Following aggregation, optional batch normalization can be applied to stabilize learning and improve convergence. An activation function, typically ReLU, introduces non-linearities into the model, enabling it to capture complex relationships in the data.

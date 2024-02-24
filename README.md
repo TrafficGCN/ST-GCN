@@ -17,7 +17,67 @@ Base models for graph convolutional networks.
 
 ### Traffic Prediction Models
 
-This document outlines the various models developed for traffic prediction. Each model is specifically designed to address unique aspects of traffic data analysis and prediction.
+#### GCN_CONV Model Detailed Overview
+
+The `GCN_CONV` model represents a sophisticated adaptation of graph convolutional networks (GCNs), aimed at efficiently capturing spatial relationships within graph-structured data. This custom layer is an integral part of our traffic prediction models, enabling the incorporation of spatial dependencies into the predictive analytics framework. Its design is based on extending the `MessagePassing` class from the PyTorch Geometric (PyG) library, which provides a flexible and powerful foundation for implementing graph neural networks (GNNs).
+
+##### Theoretical Background
+
+Graph convolutional networks generalize convolutional neural networks (CNNs) to graph-structured data, allowing for the processing of non-Euclidean domains. The core principle behind GCNs is to update a node's feature representation by aggregating feature information from its neighbors. This process, often referred to as message passing, enables the capture of local graph topology within node features.
+
+##### Message Passing Mechanism
+
+The `GCN_CONV` model implements a message passing mechanism where messages (features) from neighboring nodes are aggregated to update each node's features. The process can be formally described by the following steps:
+
+1. **Linear Transformation**: A linear transformation is applied to node features to project them into a higher-dimensional space, facilitating the learning of complex patterns. This is mathematically represented as:
+   - ![Equation 1](https://latex.codecogs.com/png.latex?x%27_i%20%3D%20Wx_i)
+   where \(x_i\) is the feature vector of node \(i\), \(W\) is the weight matrix of the linear transformation, and \(x'_i\) is the transformed feature vector.
+
+2. **Aggregation**: The transformed features of the neighbors are aggregated using a sum operation. This step can incorporate edge weights to modulate the influence of different neighbors, enhancing the model's adaptability to various graph structures.
+   - ![Equation 2](https://latex.codecogs.com/png.latex?x%27%27_i%20%3D%20%5Csum_%7Bj%20%5Cin%20N(i)%7D%20x%27_j)
+   where \(N(i)\) denotes the set of neighbors of node \(i\), and \(x''_i\) represents the aggregated feature vector.
+
+Consider we have a network of traffic sensors placed at various points on roads. Each sensor can communicate with its neighboring sensors to share and update information about traffic conditions like speed flow or density. This information is sent over the network graph to create an aggregated understanding of the conditions.
+
+```mermaid
+graph TD
+    A[Sensor A<br>Speed: ?] --> B[Sensor B<br>Speed: ?]
+    A <--> C[Sensor C<br>Speed: ?]
+    B <--> D[Sensor D<br>Speed: ?]
+    C <--> D
+    B <--> E[Sensor E<br>Speed: ?]
+    C <--> E
+    D <--> E
+    E <--> F[Sensor F<br>Speed: ?]
+
+    A <-->|Aggregates info| B
+    B <-->|Aggregates info| D
+    C <-->|Aggregates info| D
+    B <-->|Aggregates info| E
+    C <-->|Aggregates info| E
+    D <-->|Aggregates info| E
+    E <-->|Aggregates info| F
+
+    classDef sensor fill:#f9f,stroke:#333,stroke-width:4px;
+    class A,B,C,D,E,F sensor;
+```
+
+##### Batch Normalization and Activation
+
+Following aggregation, optional batch normalization can be applied to stabilize learning and improve convergence. An activation function, typically ReLU, introduces non-linearities into the model, enabling it to capture complex relationships in the data.
+
+##### Residual Connections
+
+The model supports residual connections, where the input features are added to the output of the activation function. This design choice is crucial for training deeper models by alleviating the vanishing gradient problem and facilitating the learning of identity mappings.
+
+##### Practical Implementation
+
+Implemented using PyTorch and PyTorch Geometric, the `GCN_CONV` model benefits from efficient computation and ease of integration with other neural network components. Its design is modular, allowing for easy customization of features such as the activation function, the use of batch normalization, and the inclusion of residual connections to suit specific requirements.
+
+##### Use in Traffic Prediction
+
+In the context of traffic prediction, the `GCN_CONV` model enables the effective incorporation of spatial data, such as road networks, into the forecasting framework. By modeling traffic networks as graphs, where nodes represent intersections or segments of interest and edges capture the connectivity and relationships between these points, the `GCN_CONV` layer updates traffic state predictions based on both the current state and the spatial context provided by the surrounding network structure.
+
 
 #### ARIMA_NN
 - **Path**: `models.ARIMA_NN.ARIMA_NN`

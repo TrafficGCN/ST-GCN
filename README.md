@@ -255,6 +255,54 @@ sequenceDiagram
 - **Parameters**:
   - Same as GCN_GRU
 
+
+#### GCN_GRU_TeacherForcing Model Overview
+
+The `GCN_GRU_TeacherForcing` model enhances the `GCN_GRU` framework by integrating the teacher forcing technique during the training phase. In the case of traffic prediction models like the GCN_GRU_TeacherForcing model, the ground truth might consist of the actual recorded traffic speeds and densities at various times and locations, against which the model's predictions of traffic conditions are compared to assess accuracy.
+
+#### Teacher Forcing Mechanism
+
+- **Teacher Forcing Concept**: During training, teacher forcing uses the ground truth from the previous time step as the input for the next time step, instead of the model's own predictions. This method is represented by the conditional use of target values:
+  - With Teacher Forcing: ![With Teacher Forcing](https://latex.codecogs.com/png.latex?x_{t+1}%20=%20\text{target}_t).If the decision is to use teacher forcing (determined randomly based on the teacher_forcing_ratio), the model uses the actual output from the data ```(target[:, i].unsqueeze(1))``` as the input for the next time step in the sequence. This exposes the model to the correct sequence context, potentially speeding up learning and improving accuracy by providing exact, real-world information.
+  - Without Teacher Forcing: ![Without Teacher Forcing](https://latex.codecogs.com/png.latex?x_{t+1}%20=%20\hat{y}_t)
+  where \(\text{target}_t\) is the actual output at time \(t\), and \(\hat{y}_t\) is the model's prediction at time \(t\). If not using teacher forcing, the model uses its own prediction from the previous step as the input for the next step. This mode encourages the model to learn to generate sequences autonomously, relying on its internal predictions to proceed.
+
+- **Teacher Forcing Ratio**: The `teacher_forcing_ratio` parameter controls the frequency of teacher forcing use during training, allowing for a blend of guided and autonomous learning. This ratio is a hyperparameter that can be adjusted to optimize training performance.
+
+#### Training with Teacher Forcing
+
+- During training, if `target` is provided and the model is in training mode, a random decision is made on whether to apply teacher forcing based on the `teacher_forcing_ratio`.
+- If teacher forcing is applied, the model uses the actual target sequence for the next input; otherwise, it uses its own predictions from the previous time step.
+- This technique can lead to faster convergence and improved model accuracy by directly exposing the model to the correct sequence context during training.
+
+#### Model Architecture Summary
+
+- **Spatial Feature Extraction**: Identical to `GCN_GRU`, utilizing GCN layers followed by batch normalization and dropout for regularizing spatial feature processing.
+- **Temporal Feature Processing**: Employs a GRU layer for temporal dynamics modeling, with the addition of teacher forcing to enhance sequence prediction accuracy.
+- **Output Prediction**: Generates predictions for traffic conditions using the processed features, with the output layer adapted for sequential data generation.
+
+The inclusion of teacher forcing in `GCN_GRU_TeacherForcing` offers a powerful technique for improving the predictive capabilities of the model in traffic forecasting applications.
+
+```mermaid
+sequenceDiagram
+    participant Input as Input Features (x_i)
+    participant GCN as GCN Layers
+    participant GRU as GRU Layer (with Teacher Forcing)
+    participant Attention as Optional Attention Layer
+    participant Output as Output Prediction
+
+    Input->>GCN: Spatial feature processing
+    GCN->>GRU: Temporal feature processing
+    alt Teacher Forcing
+        GRU->>GRU: Use actual output as next input
+    else Without Teacher Forcing
+        GRU->>GRU: Use model's prediction as next input
+    end
+    GRU->>Attention: Focus on relevant features (Optional)
+    Attention->>Output: Predict traffic conditions
+```
+
+
 #
 
 ### GCN_LSTM

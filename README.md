@@ -37,41 +37,35 @@ The `GCN_CONV` model implements a message passing mechanism where messages (feat
    - ![Equation 2](https://latex.codecogs.com/png.latex?x%27%27_i%20%3D%20%5Csum_%7Bj%20%5Cin%20N(i)%7D%20x%27_j)
    where \(N(i)\) denotes the set of neighbors of node \(i\), and \(x''_i\) represents the aggregated feature vector.
 
+3. **ReLU Function**
+The ReLU (Rectified Linear Unit) function is used as an activation function in neural networks. It introduces non-linearity to the model, allowing it to learn more complex patterns. The function outputs the input directly if it is positive; otherwise, it outputs zero.
+   - ![ReLU Function](https://latex.codecogs.com/png.latex?\text{ReLU}(x)%20=%20\max(0,%20x))
+
+4. **`self.activation` Attribute**
+The `self.activation` attribute in the `GCN_CONV` class specifies the activation function to be used in the neural network layer. If a specific activation function is provided during the instantiation of the class, it is used; otherwise, the default ReLU function is applied. This operation is applied after the linear transformation and aggregation steps to introduce non-linearity into the model.
+   - ![self.activation Function](https://latex.codecogs.com/png.latex?\phi(x))
+
+
 Consider we have a network of traffic sensors placed at various points on roads. Each sensor can communicate with its neighboring sensors to share and update information about traffic conditions like speed flow or density. This information is sent over the network graph to create an aggregated understanding of the conditions.
 
-```mermaid
-sequenceDiagram
-    participant Input as Input Features (H^(k-1))
-    participant ChosenNode as Chosen Node (i)
-    participant Neighbors as Neighbor Nodes (N(i))
-    participant Aggregation as Aggregation (A~ * H^(k-1))
-    participant LinearTrans as Linear Transformation (W^(k))
-    participant Activation as Nonlinear Activation (phi)
-    participant Output as Output Features (H^(k))
-
-    Input ->> ChosenNode: Feature Vector
-    ChosenNode ->> Neighbors: Identify Neighbors
-    Neighbors -->> Aggregation: Aggregate Neighbor Features
-    Aggregation ->> LinearTrans: Apply Weights
-    LinearTrans ->> Activation: Apply Activation Function
-    Activation -->> Output: Update Feature Vector
-
-
-```
 
 ```mermaid
 sequenceDiagram
     participant Input as Input Features (x_i)
     participant Linear as Linear Transformation (Wx_i)
+    participant Activation as Activation Function (phi)
     participant Aggregated as Aggregated Features (x''_i)
     participant Output as Output Features (x'_i)
 
-    Input ->> Linear: Equation 1
+    Input ->> Linear: Apply weights
     Note over Linear: x'_i = Wx_i
-    Linear ->> Aggregated: Identify Neighbors (N(i))
-    Aggregated ->> Output: Equation 2
+    Linear ->> Activation: Apply activation
+    Note over Activation: ReLU or custom function
+    Activation ->> Aggregated: Identify Neighbors (N(i))
+    Aggregated ->> Output: Aggregate neighbor features
     Note over Output: x''_i = Σ_j∈N(i) x'_j
 ```
+
 
 
 

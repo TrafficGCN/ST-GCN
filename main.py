@@ -18,7 +18,7 @@ if __name__ == "__main__":
     OS_PATH = os.path.dirname(os.path.realpath('__file__'))
 
     # Load your traffic data and adjacency matrix from CSV files
-    DATA_SET = "pems-bay"
+    DATA_SET = "metr-la"
 
     # Create subfolder in output_path
     data_csv_file = f"{OS_PATH}/data/{DATA_SET}/weather/merged_speed_traffic_and_air_temperature_data.csv"

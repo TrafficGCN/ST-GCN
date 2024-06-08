@@ -1,6 +1,7 @@
 # Author 2023 Thomas Fink
 
 import os
+from datetime import datetime
 import torch
 import torch.nn as nn
 
@@ -45,7 +46,9 @@ if __name__ == "__main__":
     edge_weight = adjacency_matrix[edge_index[0], edge_index[1]]
 
     # Create output file structure
-    output_path = output.create_output_directories(OS_PATH, DATA_SET, sensor_ids)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamped_dataset = f"{timestamp}_{DATA_SET}"
+    output_path = output.create_output_directories(OS_PATH, timestamped_dataset, sensor_ids)
 
     num_epochs = 1500
     num_predictions = 288

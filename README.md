@@ -1,5 +1,7 @@
 # Spatio-Temporal Graph Convolutional Network (ST-GCN)
-https://github.com/TrafficGCN/ST-GCN
+
+Link: https://github.com/TrafficGCN/ST-GCN
+
 Base models for graph convolutional networks. Information on data preperation can be found in the [Adjacency Matrix](https://github.com/TrafficGCN/haversine_mapping_for_spatial_integration_in_graph_convolutional_networks) and [Haversine Mapping](https://github.com/TrafficGCN/haversine_mapping_for_spatial_integration_in_graph_convolutional_networks) repositories.
 
 ## Citations
